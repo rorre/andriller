@@ -187,6 +187,12 @@ class ADBConn:
         data = self.adb_out(f'cat {file_path_strict}', binary=True, **kwargs)
         return data
 
+    def get_by_cp(self, file_path, fname, dst_path, **kwargs):
+        file_path_strict = self.strict_name(file_path)
+        self.adb_out(f'cp {file_path_strict} /sdcard/andriller/', **kwargs)
+        print(f"Copy: {'/sdcard/andriller/' + fname} -> {dst_path}")
+        self.pull_file('/sdcard/andriller/' + fname, dst_path)
+
     def pull_file(self, file_path, dst_path, **kwargs):
         """
         Uses pull command to copy a file.
@@ -197,7 +203,7 @@ class ADBConn:
         """
         file_path_strict = re.sub(' ', r'\ ', file_path)
         dst_path_strict = re.sub(' ', r'\ ', dst_path)
-        self.adb(f"pull {file_path_strict} '{dst_path_strict}'", **kwargs)
+        self.adb(f"pull {file_path_strict} {dst_path_strict}", **kwargs)
 
     def get_size(self, file_path, **kwargs) -> int:
         """

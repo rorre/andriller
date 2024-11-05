@@ -212,18 +212,11 @@ class ChainExecution:
                     self.DOWNLOADS.append(file_name)
                     return True
             elif self.permisson == self.ROOTSU:
-                for _ in range(100):
-                    file_obj = self.adb.get_file(file_path, su=self.su)
-                    if file_obj:
-                        # remote_size = remote_size if remote_size else len(file_obj)
-                        if len(file_obj) == remote_size:
-                            with open(file_saveas, 'wb') as W:
-                                W.write(file_obj)
-                            self.DataStore.add(file_saveas, file_remote)
-                            self.DOWNLOADS.append(file_name)
-                            return True
-                        time.sleep(0.25)
-                        self.logger.debug(f'Trying again for {file_name} ({len(file_obj)} bytes)')
+                self.adb.get_by_cp(file_path, file_name, file_local, su=self.su)
+                if os.path.exists(file_local):
+                    self.DataStore.add(file_saveas, file_remote)
+                    self.DOWNLOADS.append(file_name)
+                    return True
                 else:
                     self.logger.warning(f'Failed getting file: {file_name}')
         return False
